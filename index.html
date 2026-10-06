@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <title>New Idol Project</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <section id="groupLogin" class="auth-screen">
+    <div class="auth-card">
+      <div class="brand-mark">NIP</div>
+      <h1>New Idol Project</h1>
+      <p>グループ認証</p>
+      <input id="groupCode" type="text" placeholder="グループID" autocomplete="off">
+      <input id="groupPassword" type="password" placeholder="グループパスワード" autocomplete="current-password">
+      <button id="groupLoginButton" class="primary-button" type="button">グループを認証</button>
+    </div>
+  </section>
+
+  <section id="userLogin" class="auth-screen hidden">
+    <div class="auth-card">
+      <div class="brand-mark">NIP</div>
+      <h1 id="loginGroupName">New Idol Project</h1>
+      <p>ユーザーログイン</p>
+      <div class="role-switch">
+        <button id="staffRoleButton" class="role-button active" type="button">スタッフ</button>
+        <button id="idolRoleButton" class="role-button" type="button">アイドル</button>
+      </div>
+      <input id="username" type="text" placeholder="ユーザー名" autocomplete="username">
+      <input id="password" type="password" placeholder="パスワード" autocomplete="current-password">
+      <button id="loginButton" class="primary-button" type="button">ログイン</button>
+      <button id="backToGroupButton" class="text-button" type="button">グループ認証に戻る</button>
+    </div>
+  </section>
+
+  <div id="app" class="hidden">
+    <header class="topbar">
+      <div>
+        <strong id="appTitle">New Idol Project</strong>
+        <span id="userName"></span>
+      </div>
+      <button id="logoutButton" class="ghost-button" type="button">ログアウト</button>
+    </header>
+
+    <nav id="staffNav" class="main-nav hidden" aria-label="スタッフメニュー">
+      <button data-page="homePage">ホーム</button>
+      <button data-page="salesPage">売上</button>
+      <button data-page="historyPage">売上履歴</button>
+      <button data-page="calendarPage">カレンダー</button>
+      <button data-page="timerPage">タイマー</button>
+      <button data-page="membersPage">メンバー</button>
+      <button data-page="productsPage">商品</button>
+      <button data-page="healthStaffPage">体調・起床確認</button>
+      <button data-page="settingsPage">設定</button>
+    </nav>
+
+    <nav id="idolNav" class="main-nav hidden" aria-label="アイドルメニュー">
+      <button data-page="idolHomePage">ホーム</button>
+      <button data-page="calendarPage">カレンダー</button>
+      <button data-page="idolHealthPage">今日の体調</button>
+      <button data-page="idolHistoryPage">自分の履歴</button>
+    </nav>
+
+    <main class="main-content">
+      <section id="homePage" class="page">
+        <div class="page-header"><h2>ホーム</h2><p>今日の状況を確認できます。</p></div>
+        <div class="dashboard-grid">
+          <article class="stat-card"><span>本日の売上</span><strong id="dashboardSales">¥0</strong></article>
+          <article class="stat-card"><span>本日の販売数</span><strong id="dashboardQuantity">0</strong></article>
+          <article class="stat-card"><span>起床確認</span><strong id="dashboardHealth">-</strong></article>
+        </div>
+      </section>
+
+      <section id="idolHomePage" class="page hidden">
+        <div class="page-header"><h2>ホーム</h2><p id="idolGreeting">今日もよろしくお願いします。</p></div>
+        <div id="idolTodaySummary" class="panel"></div>
+      </section>
+
+      <section id="salesPage" class="page hidden">
+        <div class="page-header"><h2>売上</h2><p>売上を入力して、確認後に確定します。</p></div>
+        <div class="panel form-grid">
+          <label>商品<select id="saleProduct"></select></label>
+          <label>数量<input id="saleQuantity" type="number" min="1" value="1"></label>
+          <label>支払い方法<select id="salePayment"><option value="cash">現金</option><option value="card">カード</option><option value="paypay">PayPay</option></select></label>
+          <button id="confirmSaleButton" class="primary-button" type="button">確認する</button>
+        </div>
+      </section>
+
+      <section id="historyPage" class="page hidden">
+        <div class="page-header"><h2>売上履歴</h2></div>
+        <div class="toolbar">
+          <label>年<select id="historyYear"></select></label>
+        </div>
+        <div class="summary-grid">
+          <div class="stat-card"><span>年間売上</span><strong id="annualSales">¥0</strong></div>
+          <div class="stat-card"><span>年間販売数</span><strong id="annualQuantity">0</strong></div>
+        </div>
+        <div id="historyList"></div>
+      </section>
+
+      <section id="calendarPage" class="page hidden">
+        <div class="page-header">
+          <div>
+            <h2>カレンダー</h2>
+            <p>予定と参加できないメンバーを確認できます。</p>
+          </div>
+          <div class="calendar-controls">
+            <button id="prevMonthButton" type="button">←</button>
+            <strong id="calendarMonth"></strong>
+            <button id="nextMonthButton" type="button">→</button>
+          </div>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+        <div id="calendarDayPanel" class="panel hidden">
+          <div class="panel-header">
+            <h3 id="calendarDayTitle"></h3>
+            <button id="closeDayButton" class="text-button" type="button">閉じる</button>
+          </div>
+          <div id="calendarDayDetails"></div>
+          <button id="addScheduleButton" class="primary-button" type="button">＋ 予定を追加</button>
+        </div>
+      </section>
+
+     <section id="timerPage" class="page hidden">
+  <div class="page-header">
+    <h2>タイマー</h2>
+  </div>
+
+  <div id="memberTimerList"></div>
+</section>
+
+      <section id="membersPage" class="page hidden">
+        <div class="page-header"><h2>メンバー</h2></div>
+        <div class="panel form-row">
+          <input id="newMemberName" type="text" placeholder="メンバー名">
+          <button id="addMemberButton" class="primary-button" type="button">追加</button>
+        </div>
+        <div id="memberList"></div>
+      </section>
+
+      <section id="productsPage" class="page hidden">
+        <div class="page-header"><h2>商品</h2></div>
+        <div class="panel form-grid">
+          <label>商品名<input id="newProductName" type="text"></label>
+          <label>価格<input id="newProductPrice" type="number" min="0"></label>
+          <label>在庫<input id="newProductStock" type="number" min="0"></label>
+          <button id="addProductButton" class="primary-button" type="button">商品を追加</button>
+        </div>
+        <div id="productList"></div>
+      </section>
+
+      <section id="healthStaffPage" class="page hidden">
+        <div class="page-header"><h2>体調・起床確認</h2></div>
+        <div class="toolbar"><label>日付<input id="healthDate" type="date"></label></div>
+        <div id="staffHealthList"></div>
+      </section>
+
+      <section id="idolHealthPage" class="page hidden">
+        <div class="page-header"><h2>今日の体調</h2></div>
+        <div class="panel">
+          <p>起床時刻：<strong id="wakeTime">未起床</strong></p>
+          <button id="wakeButton" class="primary-button" type="button">起床しました</button>
+          <div class="health-buttons">
+            <button data-health="良くない" type="button">良くない</button>
+            <button data-health="そこそこ" type="button">そこそこ</button>
+            <button data-health="良い" type="button">良い</button>
+          </div>
+          <textarea id="healthMemo" maxlength="200" placeholder="ひとことメモ（任意）"></textarea>
+          <button id="saveHealthButton" class="primary-button" type="button">保存する</button>
+        </div>
+      </section>
+
+      <section id="idolHistoryPage" class="page hidden">
+        <div class="page-header"><h2>自分の履歴</h2></div>
+        <div id="idolHistoryList"></div>
+      </section>
+
+      <section id="settingsPage" class="page hidden">
+        <div class="page-header"><h2>設定</h2></div>
+        <div class="panel form-grid">
+          <label>イベント名<input id="eventName" type="text"></label>
+          <label>タイマー秒数<input id="timerSeconds" type="number" min="1" max="3600"></label>
+          <label>TimeTree URL<input id="timeTreeUrl" type="url" placeholder="後から設定できます"></label>
+          <button id="saveSettingsButton" class="primary-button" type="button">設定を保存</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div id="footerEventName">New Idol Project</div>
+      <a id="timeTreeLink" href="#" target="_blank" rel="noopener noreferrer">TimeTree</a>
+      <div>ver.3.1.1</div>
+    </footer>
+  </div>
+
+  <div id="saleConfirmModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>売上確認</h3>
+      <div id="saleConfirmContent"></div>
+      <div class="modal-actions">
+        <button id="cancelSaleButton" type="button">戻って修正</button>
+        <button id="finalizeSaleButton" class="primary-button" type="button">売上を確定</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="scheduleModal" class="modal hidden">
+    <div class="modal-card">
+      <h3 id="scheduleModalTitle">予定を追加</h3>
+      <label>種類
+        <select id="scheduleType">
+          <option value="event">ライブ・イベント</option>
+          <option value="other">その他の予定</option>
+          <option value="unavailable">参加できない</option>
+        </select>
+      </label>
+      <label>予定名<input id="scheduleTitle" type="text"></label>
+      <label>日付<input id="scheduleDate" type="date"></label>
+      <label>開始時刻<input id="scheduleStart" type="time"></label>
+      <label>終了時刻<input id="scheduleEnd" type="time"></label>
+      <label>場所<input id="scheduleLocation" type="text"></label>
+      <div class="modal-actions">
+        <button id="cancelScheduleButton" type="button">キャンセル</button>
+        <button id="saveScheduleButton" class="primary-button" type="button">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="productModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>商品編集</h3>
+      <input id="editProductName" type="text" placeholder="商品名">
+      <input id="editProductPrice" type="number" min="0" placeholder="価格">
+      <input id="editProductStock" type="number" min="0" placeholder="在庫">
+      <div class="modal-actions">
+        <button id="closeProductModal" type="button">キャンセル</button>
+        <button id="saveProductButton" class="primary-button" type="button">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
